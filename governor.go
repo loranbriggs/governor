@@ -2,7 +2,7 @@ package main
 
 import (
   "fmt"
-  "github.com/loranbriggs/w1thermsensor"
+  "github.com/loranbriggs/go-w1sensor"
   "github.com/nathan-osman/go-rpigpio"
   "html/template"
   "net/http"

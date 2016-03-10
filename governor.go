@@ -19,7 +19,7 @@ var (
   state State = ready
 )
 
-const buffer = 1.0
+const buffer = 2.0
 
 type State int
 
@@ -59,7 +59,7 @@ func regulate() {
     fmt.Printf("%v\nstate:%v\ncurrent:%v\nminTemp:%v\n", time.Now(), state, currentTemp, minTemp)
     switch state {
     case ready:
-      if currentTemp < minTemp-buffer {
+      if currentTemp < minTemp {
         state = heating
         fmt.Println("heat on")
         heatOn()
@@ -68,7 +68,7 @@ func regulate() {
         heatOff()
       }
     case heating:
-      if currentTemp < minTemp+buffer {
+      if currentTemp < minTemp + buffer {
         fmt.Println("heat on")
         heatOn()
       } else {
@@ -92,7 +92,6 @@ func initPin() {
   }
   pin.Write(rpi.HIGH)
   fmt.Println("init")
-  //defer pin.Close()
 }
 
 func heatOn() {

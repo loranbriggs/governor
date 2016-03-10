@@ -1,0 +1,9 @@
+<h1>Welcome to the Home</h1>
+
+<h3>Current temp: {{.CurrentTemp}}</h3>
+<h3>Aiming for: {{.DesiredTemp}}</h3>
+
+<form action="/set" method="GET">
+  <input type="text" name="newTemp">
+  <input type="submit" value="Make it so">
+</form>

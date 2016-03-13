@@ -15,7 +15,8 @@ var (
   minTemp float64 = 70.0
   maxTemp float64
   err error
-  pin  *rpi.Pin
+  heaterPin  *rpi.Pin
+  tempSensor *w1sensor.Sensor
   state State = ready
 )
 
@@ -53,9 +54,14 @@ func adjustTempHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func regulate() {
-  initPin()
+  initHeaterPin()
+  initTempSensor()
   for {
-    currentTemp = w1thermsensor.TemperatureF()
+    currentTemp, err = tempSensor.ReadF()
+    if err != nil {
+      fmt.Print(err)
+      continue
+    }
     fmt.Printf("%v\nstate:%v\ncurrent:%v\nminTemp:%v\n", time.Now(), state, currentTemp, minTemp)
     switch state {
     case ready:
@@ -85,21 +91,29 @@ func regulate() {
   }
 }
 
-func initPin() {
-  pin, err = rpi.OpenPin(21, rpi.OUT)
+func initTempSensor() {
+  tempSensor, err = w1sensor.FirstAvailableSensor()
   if err != nil {
     panic(err)
   }
-  pin.Write(rpi.HIGH)
-  fmt.Println("init")
+  fmt.Println("init temp sensor")
+}
+
+func initHeaterPin() {
+  heaterPin, err = rpi.OpenPin(21, rpi.OUT)
+  if err != nil {
+    panic(err)
+  }
+  heaterPin.Write(rpi.HIGH)
+  fmt.Println("init heater pin")
 }
 
 func heatOn() {
-  pin.Write(rpi.LOW)
+  heaterPin.Write(rpi.LOW)
 }
 
 func heatOff() {
-  pin.Write(rpi.HIGH)
+  heaterPin.Write(rpi.HIGH)
 }
 
 func main() {
